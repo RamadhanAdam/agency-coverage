@@ -1,7 +1,7 @@
 import os
 import dash
 from dash import dcc, html
-from dash.dependencies import Input, Output, State  # Correct import
+from dash.dependencies import Input, data, State
 import pandas as pd
 import plotly.express as px
 from dash.dash_table import DataTable
@@ -12,6 +12,7 @@ from waitress import serve
 sub_agencies_path = './data/SubAgencies to Agencies.xlsx'
 sub_agencies_df = pd.read_excel(sub_agencies_path, sheet_name=0)
 
+# Initialize Dash application
 app = dash.Dash(__name__)
 
 # Generate a list of unique agencies and abbreviations for the dropdown
@@ -66,12 +67,12 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    Output('heatmap', 'figure'),  # Correct usage of Output
-    Output('state-table', 'data'),
+    data('heatmap', 'figure'),
+    data('state-table', 'data'),
     Input('upload-data', 'contents'),
     Input('lp-input', 'value'),
     Input('search-button', 'n_clicks'),
-    Input('search-agency-dropdown', 'value'),
+    Input('search-agency-dropdown', 'value'),  # Get selected values from the dropdown
     State('upload-data', 'filename')
 )
 def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename):
@@ -190,19 +191,18 @@ def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename)
                     # Confirm agency state matches
                     merged_data = merged_data[merged_data['agency state'] == merged_data['Agency STATE']]
 
-                    # Group and aggregate the data
                     merged_data = merged_data.groupby('license_plate').agg({
-                        'agency state': lambda x: ', '.join(x.unique()),
-                        'exists in aap': lambda x: True if (x == 1).any() else False,
-                        'was in aap': lambda x: True if (x == 1).any() else False,
+                        'STATE_GOOGLE': lambda x: ', '.join(x.unique()),
                         'agency name': lambda x: ', '.join(x.unique()),
                         'lifecycle state': lambda x: ', '.join(x.unique()), 
                         'abbreviation': lambda x: ', '.join(x.unique()),
+                        'exists in aap': lambda x: True if (x == 1).any() else False,
+                        'was in aap': lambda x: True if (x == 1).any() else False,
                         'Accounts_In_LP_Magement': lambda x: ', '.join(x.unique()),
-                        'AGENCY RECOMMENDED ACCOUNT': lambda x: ', '.join(x.unique())
+                        'AGENCY RECOMMENDED ACCOUNT': lambda x: ', '.join(x.unique())  # Using the new column
                     }).reset_index()
 
-                    merged_data.rename(columns={'abbreviation': 'LP State'}, inplace=True)
+                    merged_data.rename(columns={'STATE_GOOGLE': 'agency state'}, inplace=True)
 
                     states_covered = merged_data['agency state'].iloc[0].split(', ')
                     plate_state_counts = pd.DataFrame({'agency state': states_covered, 'Count': [1] * len(states_covered)})
@@ -227,9 +227,8 @@ def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename)
                         scope="usa",
                         title=f"No data found for License Plate: {lp_input}"
                     ), []
+    return px.choropleth(locations=[], scope="usa", title="No search input"), []
 
-    return px.choropleth(locations=[], scope="usa", title="Please select agencies or upload data"), []
-
+# Starting the server
 if __name__ == '__main__':
-    port = int(os.environ.get("PORT", 8050))
-    app.run_server(host='0.0.0.0', port=port, debug=False)
+    serve(app.server, host='0.0.0.0', port=8050)
