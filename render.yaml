@@ -2,6 +2,11 @@ services:
   - type: web
     name: agency-analysis-dashboard
     env: python
-    buildCommand: ""
+    plan: free  # Adjust this as per your Render plan (free, standard, etc.)
+    buildCommand: "pip install -r src/requirements.txt"
     startCommand: "python src/Dashboard.py"
     autoDeploy: true
+    #healthCheckPath: "/"  # Optional: specify the health check path
+    #envVars:  # Optional: if you have environment variables to include
+    #  - key: APP_ENV
+     #   value: production
