@@ -231,4 +231,4 @@ def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename)
 
 # Starting the server
 if __name__ == '__main__':
-    serve(app.server, host='0.0.0.0', port=8055)
+    serve(app.server, host='0.0.0.0', port=8099)
