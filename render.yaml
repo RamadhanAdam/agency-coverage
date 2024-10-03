@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: agency-analysis-dashboard
+    env: python
+    buildCommand: ""
+    startCommand: "python src/app.py"
+    autoDeploy: true

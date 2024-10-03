@@ -1,0 +1,7 @@
+dash==2.17.0
+pandas==2.2.3
+plotly==5.22.0
+waitress==3.0.0
+openpyxl==3.1.2
+dash-bootstrap-components==1.3.0  # If using Bootstrap components in Dash
+
