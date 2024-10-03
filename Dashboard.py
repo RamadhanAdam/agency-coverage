@@ -9,8 +9,8 @@ import base64
 from waitress import serve
 
 # Load the sub-agencies data at the start
-sub_agencies_path = './data/SubAgencies to Agencies.xlsx'
-sub_agencies_df = pd.read_excel(sub_agencies_path, sheet_name=0)
+sub_agencies_path = './src/data/SubAgencies to Agencies.xlsx'
+sub_agencies_df = pd.read_excel(sub_agencies_path, sheet_name="Sheet1")
 
 # Initialize Dash application
 app = dash.Dash(__name__)
@@ -19,7 +19,7 @@ app = dash.Dash(__name__)
 agency_options = [
     {'label': row['AGENCY'], 'value': row['AGENCY']} for _, row in sub_agencies_df.iterrows()
 ] + [
-    {'label': row['ABBV'], 'value': row['ABBV']} for _, row in sub_agencies_df.iterrows()
+    {'label': row['COVERED AGENCIES'], 'value': row['COVERED AGENCIES']} for _, row in sub_agencies_df.iterrows()
 ]
 
 app.layout = html.Div([
@@ -36,7 +36,7 @@ app.layout = html.Div([
         dcc.Dropdown(
             id='search-agency-dropdown',
             options=agency_options,
-            placeholder='Select ABBV or AGENCY',
+            placeholder='Select COVERED AGENCIES or AGENCY',
             multi=True,  # Enable multi-select
             style={'width': '300px', 'marginRight': '10px'},  # Set a wider width for the dropdown
             clearable=True,  # Allow clearing selections
@@ -81,7 +81,7 @@ def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename)
         # Search for agencies
         agency_data = sub_agencies_df[
             sub_agencies_df['AGENCY'].isin(selected_agencies) | 
-            sub_agencies_df['ABBV'].isin(selected_agencies)
+            sub_agencies_df['COVERED AGENCIES'].isin(selected_agencies)
         ]
 
         if not agency_data.empty:
@@ -148,7 +148,7 @@ def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename)
                         'lifecycle state': lambda x: ', '.join(x.unique()), 
                         'abbreviation': lambda x: ', '.join(x.unique()),
                         'Accounts_In_LP_Magement': lambda x: ', '.join(x.unique()),
-                        'AGENCY RECOMMENDED ACCOUNT': lambda x: ', '.join(x.unique())  # Using the new column
+                        ' RECOMMENDED ACCOUNTS': lambda x: ', '.join(x.unique())  # Using the new column
                     }).reset_index()
 
                     merged_data.rename(columns={'abbreviation': 'LP State'}, inplace=True)
@@ -199,7 +199,7 @@ def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename)
                         'exists in aap': lambda x: True if (x == 1).any() else False,
                         'was in aap': lambda x: True if (x == 1).any() else False,
                         'Accounts_In_LP_Magement': lambda x: ', '.join(x.unique()),
-                        'AGENCY RECOMMENDED ACCOUNT': lambda x: ', '.join(x.unique())  # Using the new column
+                        ' RECOMMENDED ACCOUNTS': lambda x: ', '.join(x.unique())  # Using the new column
                     }).reset_index()
 
                     merged_data.rename(columns={'STATE_GOOGLE': 'agency state'}, inplace=True)
@@ -231,4 +231,4 @@ def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename)
 
 # Starting the server
 if __name__ == '__main__':
-    serve(app.server, host='0.0.0.0', port=8050)
+    serve(app.server, host='0.0.0.0', port=8055)
