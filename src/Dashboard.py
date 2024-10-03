@@ -232,4 +232,5 @@ def update_content(contents, lp_input, lp_n_clicks, selected_agencies, filename)
     return px.choropleth(locations=[], scope="usa", title="Please select agencies or upload data"), []
 
 if __name__ == '__main__':
-    app.run_server(debug=False)
+    port = int(os.environ.get("PORT", 8050))
+    app.run_server(host='0.0.0.0', port=port, debug=False)

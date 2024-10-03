@@ -3,5 +3,5 @@ services:
     name: agency-analysis-dashboard
     env: python
     buildCommand: ""
-    startCommand: "python src/app.py"
+    startCommand: "python src/Dashboard.py"
     autoDeploy: true
