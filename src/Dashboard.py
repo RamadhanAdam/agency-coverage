@@ -12,7 +12,6 @@ from waitress import serve
 sub_agencies_path = './data/SubAgencies to Agencies.xlsx'
 sub_agencies_df = pd.read_excel(sub_agencies_path, sheet_name=0)
 
-# Initialize Dash application
 app = dash.Dash(__name__)
 
 # Generate a list of unique agencies and abbreviations for the dropdown
