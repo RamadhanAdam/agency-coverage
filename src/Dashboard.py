@@ -1,7 +1,7 @@
 import os
 import dash
 from dash import dcc, html
-from dash.dependencies import Input, data, State
+from dash.dependencies import Input, Output, State
 import pandas as pd
 import plotly.express as px
 from dash.dash_table import DataTable
@@ -67,8 +67,8 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    data('heatmap', 'figure'),
-    data('state-table', 'data'),
+    Output('heatmap', 'figure'),
+    Output('state-table', 'data'),
     Input('upload-data', 'contents'),
     Input('lp-input', 'value'),
     Input('search-button', 'n_clicks'),
