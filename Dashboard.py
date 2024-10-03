@@ -9,7 +9,7 @@ import base64
 from waitress import serve
 
 # Load the sub-agencies data at the start
-sub_agencies_path = 'src/data/SubAgencies to Agencies.xlsx'
+sub_agencies_path = './src/data/SubAgencies to Agencies.xlsx'
 sub_agencies_df = pd.read_excel(sub_agencies_path, sheet_name="Sheet1")
 
 # Initialize Dash application
